@@ -1,0 +1,67 @@
+﻿using EmployeeManagement.Models;
+using EmployeeManagement.Web.Services;
+using Microsoft.AspNetCore.Components;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EmployeeManagement.Web.Pages
+{
+    public partial class EmployeeListBase : ComponentBase
+    {
+        [Inject]
+        public IEmployeeService EmployeeService { get; set; }
+        public IEnumerable<Employee> Employees { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            Employees = (await EmployeeService.GetEmployees()).ToList();
+
+            //await Task.Run(() => LoadEmployees());
+        }
+
+        //HardCode Data
+        private void LoadEmployees()
+        {
+            System.Threading.Thread.Sleep(2000);
+            Employee e1 = new Employee
+            {
+                EmployeeId = 1,
+                FirstName = "Karthi",
+                LastName = "Nagamuthu",
+                Email = "Karthipkm1993@gmail.com",
+                DOB = new DateTime(1993, 11, 16),
+                Gender = Gender.Male,
+                DepartmentId = 1,
+                PhotoPath = "images/karthi.jpg"
+            };
+
+            Employee e2 = new Employee
+            {
+                EmployeeId = 2,
+                FirstName = "Keerthi",
+                LastName = "Karthi",
+                Email = "Keerthi1999@gmail.com",
+                DOB = new DateTime(1999, 06, 12),
+                Gender = Gender.Male,
+                DepartmentId = 2,
+                PhotoPath = "images/keerthi.jpg"
+            };
+
+            Employee e3 = new Employee
+            {
+                EmployeeId = 3,
+                FirstName = "Krithik",
+                LastName = "Karthi",
+                Email = "Krithik2021@gmail.com",
+                DOB = new DateTime(2021, 11, 12),
+                Gender = Gender.Male,
+                DepartmentId = 3,
+                PhotoPath = "images/krithik.png"
+            };
+
+            Employees = new List<Employee> { e1, e2, e3 };
+        }
+    }
+}
