@@ -1,4 +1,6 @@
-﻿using EmployeeManagement.Models;
+﻿using AutoMapper;
+using EmployeeManagement.Models;
+using EmployeeManagement.Web.Models;
 using EmployeeManagement.Web.Services;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -13,6 +15,7 @@ namespace EmployeeManagement.Web.Pages
         [Inject]
         public IEmployeeService EmployeeService { get; set; }
         public Employee Employee { get; set; } = new Employee();
+        public EditEmployeeModel EditEmployeeModel { get; set; } = new EditEmployeeModel();
 
         [Inject]
         public IDepartmentService DepartmentService { get; set; }
@@ -20,10 +23,34 @@ namespace EmployeeManagement.Web.Pages
 
         [Parameter]
         public string Id { get; set; }
+
+        [Inject]
+        public IMapper Mapper { get; set; }
+
         protected async override Task OnInitializedAsync()
         {
             Employee = await EmployeeService.GetEmployee(int.Parse(Id));
             Departments = (await DepartmentService.GetDepartments()).ToList();
+
+            Mapper.Map(Employee, EditEmployeeModel);
+
+            //EditEmployeeModel = new EditEmployeeModel
+            //{
+            //    EmployeeId = Employee.EmployeeId,
+            //    FirstName = Employee.FirstName,
+            //    LastName = Employee.LastName,
+            //    Email = Employee.Email,
+            //    ConfirmEmail = Employee.Email,
+            //    DOB = Employee.DOB,
+            //    Gender = Employee.Gender,
+            //    PhotoPath = Employee.PhotoPath,
+            //    DepartmentId = Employee.DepartmentId,
+            //    Department = Employee.Department
+            //};
+        }
+
+        protected void HandleValidSubmit()
+        { 
         }
     }
 }
