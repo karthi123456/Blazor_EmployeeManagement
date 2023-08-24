@@ -59,7 +59,7 @@ namespace EmployeeManagement.Api.Controllers
                 if (employee == null)
                     return BadRequest();
 
-                var emp = employeeRepository.GetEmployeeByEmail(employee.Email).Result;
+                var emp = await employeeRepository.GetEmployeeByEmail(employee.Email);
                 if (emp != null)
                 {
                     ModelState.AddModelError("email", "Employee email already exists");
@@ -70,25 +70,22 @@ namespace EmployeeManagement.Api.Controllers
 
                 return CreatedAtAction(nameof(GetEmployees), new { employeeId = employee.EmployeeId }, createdEmployee);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                         "Error retiriving from Database server.");
             }
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<Employee>> UpdateEmployee(int id, Employee employee)
+        [HttpPut]
+        public async Task<ActionResult<Employee>> UpdateEmployee(Employee employee)
         {
             try
             {
-                if (id != employee.EmployeeId)
-                    return BadRequest("Employee ID mismatch.");
-
                 var updateEmployee = await employeeRepository.UpdateEmployee(employee);
 
                 if (updateEmployee == null)
-                    return NotFound($"Employee with Id = {id} not found");
+                    return NotFound($"Employee with Id = {employee.EmployeeId} not found");
 
                 return CreatedAtAction(nameof(GetEmployees), new { employeeId = employee.EmployeeId }, updateEmployee);
             }
@@ -106,7 +103,7 @@ namespace EmployeeManagement.Api.Controllers
             {
                 var employeeToDelete = await employeeRepository.GetEmployee(id);
 
-                if(employeeToDelete == null)
+                if (employeeToDelete == null)
                     return NotFound($"Employee with Id = {id} not found");
 
                 return await employeeRepository.DeleteEmployee(id);

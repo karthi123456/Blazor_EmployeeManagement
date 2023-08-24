@@ -19,13 +19,13 @@ else
                 <h4>Employee Id: @Employee.EmployeeId</h4>
                 <h4>Email: @Employee.Email</h4>
                 <h4>Department: @(Employee.Department == null? "N/A" : Employee.Department.DepartmentName)</h4>
-                <button class="btn btn-primary" @onclick="@Button_Click">@ButtonText</button>
+                @*<button class="btn btn-primary" @onclick="@Button_Click">@ButtonText</button>*@
             </div>
-            <div class="card-footer text-center @CssClass">
+            @*<div class="card-footer text-center @CssClass">
                 <a href="/" class="btn btn-primary">Back</a>
                 <a href="#" class="btn btn-primary">Edit</a>
                 <a href="#" class="btn btn-primary">Delete</a>
-            </div>
+            </div>*@
         </div>
     </div>
 }

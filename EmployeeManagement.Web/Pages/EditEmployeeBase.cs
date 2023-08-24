@@ -24,33 +24,56 @@ namespace EmployeeManagement.Web.Pages
         [Parameter]
         public string Id { get; set; }
 
+        public string ActionName { get; set; }
+
         [Inject]
         public IMapper Mapper { get; set; }
 
+        [Inject]
+        public NavigationManager NavManager { get; set; }
+
         protected async override Task OnInitializedAsync()
         {
-            Employee = await EmployeeService.GetEmployee(int.Parse(Id));
+            int.TryParse(Id, out int employeeId);
+
+            if (employeeId != 0)
+            {
+                ActionName = "Edit";
+                Employee = await EmployeeService.GetEmployee(int.Parse(Id));
+            }
+            else
+            {
+                ActionName = "Create";
+                Employee = new Employee
+                {
+                    DepartmentId = 1,
+                    DOB = DateTime.Now,
+                    PhotoPath = "images/nophoto.jpg"
+                };
+            }
+
             Departments = (await DepartmentService.GetDepartments()).ToList();
 
             Mapper.Map(Employee, EditEmployeeModel);
-
-            //EditEmployeeModel = new EditEmployeeModel
-            //{
-            //    EmployeeId = Employee.EmployeeId,
-            //    FirstName = Employee.FirstName,
-            //    LastName = Employee.LastName,
-            //    Email = Employee.Email,
-            //    ConfirmEmail = Employee.Email,
-            //    DOB = Employee.DOB,
-            //    Gender = Employee.Gender,
-            //    PhotoPath = Employee.PhotoPath,
-            //    DepartmentId = Employee.DepartmentId,
-            //    Department = Employee.Department
-            //};
         }
 
-        protected void HandleValidSubmit()
-        { 
+        protected async Task HandleValidSubmit()
+        {
+            Mapper.Map(EditEmployeeModel, Employee);
+            Employee result = null;
+
+            if (Employee.EmployeeId != 0)
+            {
+                result = await EmployeeService.UpdateEmployee(Employee);
+            }
+            else
+            {
+                result = await EmployeeService.CreateEmployee(Employee);
+            }
+            if (result != null)
+            {
+                NavManager.NavigateTo("/");
+            }
         }
     }
 }
