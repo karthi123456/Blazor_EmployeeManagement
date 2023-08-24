@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+
+using EmployeeManagement.Models.CustomValidators;
 
 namespace EmployeeManagement.Models
 {
@@ -14,6 +14,8 @@ namespace EmployeeManagement.Models
         [Required]
         public string LastName { get; set; }
         [EmailAddress]
+        [EmailCustomValidator(AllowedDomain = "gmail.com", 
+            ErrorMessage ="gmail.com domain only allowed.")]
         public string Email { get; set; }
         public DateTime DOB { get; set; }
         public Gender Gender { get; set; }
