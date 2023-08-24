@@ -1,0 +1,12 @@
+﻿<h3 style="@BorderStyle; @ElementStyle">-ChildComponent</h3>
+<CascadingValue Value="@ElementStyle" Name="ColorStyle">
+    <CascadingValue Value="@BorderStyle" Name="BorderStyle">
+        <GrandChildComponent></GrandChildComponent>
+    </CascadingValue>
+</CascadingValue>
+@code{
+    [CascadingParameter(Name = "ColorStyle")]
+    public string ElementStyle { get; set; }
+    [CascadingParameter(Name = "BorderStyle")]
+    public string BorderStyle { get; set; }
+}

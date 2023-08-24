@@ -1,0 +1,8 @@
+﻿<h3 style="@BorderStyle; @ElementStyle">--GrandChildComponent</h3>
+
+@code{
+    [CascadingParameter(Name = "ColorStyle")]
+    public string ElementStyle { get; set; }
+    [CascadingParameter(Name = "BorderStyle")]
+    public string BorderStyle { get; set; }
+}

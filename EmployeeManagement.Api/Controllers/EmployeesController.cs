@@ -70,7 +70,7 @@ namespace EmployeeManagement.Api.Controllers
 
                 return CreatedAtAction(nameof(GetEmployees), new { employeeId = employee.EmployeeId }, createdEmployee);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                         "Error retiriving from Database server.");
