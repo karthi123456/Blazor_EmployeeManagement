@@ -43,7 +43,15 @@ namespace EmployeeManagement.WebApp
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.SignIn.RequireConfirmedEmail = false;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
+
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy("SupportedCityOnly", policy => policy.RequireClaim("city", "theni"));
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            });
+
 
             services.AddAutoMapper(typeof(EmployeeProfile));
             services.AddHttpClient<IEmployeeService, EmployeeService>(client =>

@@ -1,7 +1,7 @@
 ﻿@page "/"
 @inherits EmployeeListBase
 
-<AuthorizeView>
+<AuthorizeView Policy="SupportedCityOnly" Roles="Admin">
     <Authorized>
         <h3>Selected Employees Count - @SelectEmployeesCount</h3>
         <input type="checkbox" id="showFooter" @bind="ShowFooter" />
