@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -10,12 +12,14 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(SignInManager<IdentityUser> _signInManager,
-            UserManager<IdentityUser> _userManager)
+            UserManager<IdentityUser> _userManager, RoleManager<IdentityRole> _roleManager)
         {
             this._signInManager = _signInManager;
             this._userManager = _userManager;
+            this._roleManager = _roleManager;
         }
 
         [BindProperty]
@@ -40,7 +44,17 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
 
                 var result = await _userManager.CreateAsync(identity, Input.Password);
 
-                if (result.Succeeded) 
+                //Add Additional User information
+                var claim = new Claim("city", Input.City.ToLower());
+                var claimsResult = await _userManager.AddClaimAsync(identity, claim);
+
+                //Add user-role 
+                var role = new IdentityRole(Input.Role);
+                var addRoleResult = await _roleManager.CreateAsync(role);
+                var addUserRoleResult = await _userManager.AddToRoleAsync(identity, Input.Role);
+
+                if (result.Succeeded && claimsResult.Succeeded 
+                    && addRoleResult.Succeeded && addUserRoleResult.Succeeded) 
                 {
                     await _signInManager.SignInAsync(identity, isPersistent: false);
                     return LocalRedirect(ReturnUrl);
@@ -59,6 +73,12 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
+
+            [Required]
+            public string City { get; set; }
+
+            [Required]
+            public string Role { get; set; }
         }
     }
 }
