@@ -1,22 +1,21 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using EmployeeManagement.WebApp.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
 {
+
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-
-        public LoginModel(SignInManager<IdentityUser> _signInManager)
+        private readonly CustomAuthService _auth;
+        public LoginModel(CustomAuthService _auth)
         {
-            this._signInManager = _signInManager;
+            this._auth = _auth;
         }
 
         [BindProperty]
@@ -31,19 +30,42 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync()
         {
             ReturnUrl = Url.Content("~/");
-            
+
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email,
-                    Input.Password, isPersistent: false, lockoutOnFailure: false);
+                ClaimsPrincipal principal;
+                _auth.Users.TryGetValue(Input.Email, out principal);
 
-                if (result.Succeeded)
+                if (principal == null)
+                {
+                    ModelState.AddModelError("ErrorMessage",
+                            "UserName is not valid");
+
+                    return Page();
+                }
+
+                var identity = principal.Identity as ClaimsIdentity;
+                var userName = identity.FindFirst(ClaimTypes.Name)?.Value;
+                var passWord = identity.FindFirst("password")?.Value;
+
+                if (userName == Input.Email && passWord == Input.Password)
+                {
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                        principal);
+
                     return LocalRedirect(ReturnUrl);
+                }
+                else
+                {
+                    ModelState.AddModelError("ErrorMessage",
+                                "Incorrect Password");
+                    return Page();
+                }
             }
 
-            ModelState.AddModelError("ErrorMessage", 
+            ModelState.AddModelError("ErrorMessage",
                 "Incorrect Username and Password");
-            
+
             return Page();
         }
         public class InputModel

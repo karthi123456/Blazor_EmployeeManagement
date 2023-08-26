@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Identity;
+using EmployeeManagement.WebApp.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,16 +13,10 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        public RegisterModel(SignInManager<IdentityUser> _signInManager,
-            UserManager<IdentityUser> _userManager, RoleManager<IdentityRole> _roleManager)
+        private readonly CustomAuthService _auth;
+        public RegisterModel(CustomAuthService _auth)
         {
-            this._signInManager = _signInManager;
-            this._userManager = _userManager;
-            this._roleManager = _roleManager;
+            this._auth = _auth;
         }
 
         [BindProperty]
@@ -36,31 +33,28 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
             ReturnUrl = Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var identity = new IdentityUser
+                var claims = new List<Claim>
                 {
-                    UserName = Input.Email,
-                    Email = Input.Email
+                    new Claim(ClaimTypes.Name, Input.Email),
+                    new Claim(ClaimTypes.Email, Input.Email),
+                    new Claim("city", Input.City),
+                    new Claim("password", Input.Password),
+                    new Claim(ClaimTypes.Role, Input.Role)
                 };
 
-                var result = await _userManager.CreateAsync(identity, Input.Password);
+                var claimsIdentity = new ClaimsIdentity(claims, 
+                        CookieAuthenticationDefaults.AuthenticationScheme);
 
-                //Add Additional User information
-                var claim = new Claim("city", Input.City.ToLower());
-                var claimsResult = await _userManager.AddClaimAsync(identity, claim);
+                var principal = new ClaimsPrincipal(claimsIdentity);
 
-                //Add user-role 
-                var role = new IdentityRole(Input.Role);
-                var addRoleResult = await _roleManager.CreateAsync(role);
-                var addUserRoleResult = await _userManager.AddToRoleAsync(identity, Input.Role);
+                _auth.Users.Add(Input.Email, principal);
 
-                if (result.Succeeded && claimsResult.Succeeded 
-                    && addRoleResult.Succeeded && addUserRoleResult.Succeeded) 
-                {
-                    await _signInManager.SignInAsync(identity, isPersistent: false);
-                    return LocalRedirect(ReturnUrl);
-                }
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+                            principal);
+
+                return LocalRedirect(ReturnUrl);
             }
-
+            
             return Page();
         }
 

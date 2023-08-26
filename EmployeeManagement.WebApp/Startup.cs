@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace EmployeeManagement.WebApp
 {
@@ -34,25 +35,16 @@ namespace EmployeeManagement.WebApp
 
             services.AddDbContext<DataContext>(opt => opt.UseSqlServer(connectionString));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(opt =>
-            {
-                opt.Password.RequireDigit = false;
-                opt.Password.RequiredLength = 5;
-                opt.Password.RequireLowercase = false;
-                opt.Password.RequireUppercase = false;
-                opt.Password.RequireNonAlphanumeric = false;
-                opt.SignIn.RequireConfirmedEmail = false;
-            })
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DataContext>();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
-            services.AddAuthorization(options => 
+            services.AddAuthorization(options =>
             {
                 options.AddPolicy("SupportedCityOnly", policy => policy.RequireClaim("city", "theni"));
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             });
 
-
+            services.AddSingleton<CustomAuthService>();
             services.AddAutoMapper(typeof(EmployeeProfile));
             services.AddHttpClient<IEmployeeService, EmployeeService>(client =>
             {
