@@ -1,10 +1,13 @@
-﻿using EmployeeManagement.Models;
-using EmployeeManagement.WebApp.Services;
-using Microsoft.AspNetCore.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+
+using EmployeeManagement.Models;
+using EmployeeManagement.WebApp.Services;
 
 namespace EmployeeManagement.WebApp.Pages
 {
@@ -12,19 +15,35 @@ namespace EmployeeManagement.WebApp.Pages
     {
         [Inject]
         public IEmployeeService EmployeeService { get; set; }
+
+        [Inject]
+        public NavigationManager NavManager { get; set; }
+
+        [CascadingParameter]
+        public Task<AuthenticationState> AuthenticationState { get; set; }
+
+        public System.Security.Claims.ClaimsPrincipal User { get; set; }
+
         public bool ShowFooter { get; set; } = true;
         public IEnumerable<Employee> Employees { get; set; }
         protected int SelectEmployeesCount { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            Employees = (await EmployeeService.GetEmployees()).ToList();
+            var authState = await AuthenticationState;
+            User = authState.User;
+
+            if (User.Identity.IsAuthenticated)
+                Employees = (await EmployeeService.GetEmployees()).ToList();
+            else
+                NavManager.NavigateTo("/Identity/Account/Login");
+
 
             //await Task.Run(() => LoadEmployees());
         }
 
         protected async Task EmployeeDeleted()
-        { 
+        {
             Employees = (await EmployeeService.GetEmployees()).ToList();
         }
         protected void EmployeeSelectionChanged(bool isSelected)

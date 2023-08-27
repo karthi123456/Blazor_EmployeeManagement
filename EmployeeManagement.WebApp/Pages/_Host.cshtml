@@ -1,5 +1,7 @@
 ﻿@page "/"
 @namespace EmployeeManagement.WebApp.Pages
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
@@ -32,5 +34,30 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <script>
+        let timeoutWarning;
+        const sessionTimeout = 20;
+
+        function resetSessionTimeout() {
+            clearTimeout(timeoutWarning);
+            timeoutWarning = setTimeout(showPopup, sessionTimeout * 1000);
+        }
+
+        function showPopup() {
+            var confirmation = confirm("Are you sure want to extend session?");
+            if (confirmation) {
+                resetSessionTimeout();
+            }
+            else {
+                window.location.href = "/Identity/Account/Logout";
+            }
+        }
+
+        document.addEventListener('mousemove', resetSessionTimeout);
+        document.addEventListener('keydown', resetSessionTimeout);
+    </script>
+
+
 </body>
 </html>
