@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.32413.511
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeManagement.Models", "EmployeeManagement.Models\EmployeeManagement.Models.csproj", "{5ACA5AC4-4CD4-4C5A-878A-FC508626A828}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeManagement.Web", "EmployeeManagement.Web\EmployeeManagement.Web.csproj", "{22F4F9FB-F8B3-4D32-AE3B-CB9A52636750}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeManagement.Api", "EmployeeManagement.Api\EmployeeManagement.Api.csproj", "{92F6AC8D-FABA-40E5-BE14-A089B9860A67}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmployeeManagement.Components", "EmployeeManagement.Components\EmployeeManagement.Components.csproj", "{252D96E9-8DA9-4693-B263-529C01611C4A}"
@@ -23,10 +21,6 @@ Global
 		{5ACA5AC4-4CD4-4C5A-878A-FC508626A828}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ACA5AC4-4CD4-4C5A-878A-FC508626A828}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ACA5AC4-4CD4-4C5A-878A-FC508626A828}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22F4F9FB-F8B3-4D32-AE3B-CB9A52636750}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22F4F9FB-F8B3-4D32-AE3B-CB9A52636750}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22F4F9FB-F8B3-4D32-AE3B-CB9A52636750}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22F4F9FB-F8B3-4D32-AE3B-CB9A52636750}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92F6AC8D-FABA-40E5-BE14-A089B9860A67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{92F6AC8D-FABA-40E5-BE14-A089B9860A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92F6AC8D-FABA-40E5-BE14-A089B9860A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
