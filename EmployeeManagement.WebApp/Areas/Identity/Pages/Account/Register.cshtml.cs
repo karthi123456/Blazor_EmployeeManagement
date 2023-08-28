@@ -54,7 +54,7 @@ namespace EmployeeManagement.WebApp.Areas.Identity.Pages.Account
                 var addUserRoleResult = await _userManager.AddToRoleAsync(identity, Input.Role);
 
                 if (result.Succeeded && claimsResult.Succeeded 
-                    && addRoleResult.Succeeded && addUserRoleResult.Succeeded) 
+                    && addUserRoleResult.Succeeded) 
                 {
                     await _signInManager.SignInAsync(identity, isPersistent: false);
                     return LocalRedirect(ReturnUrl);
